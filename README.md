@@ -71,3 +71,29 @@ Script Node.js đóng vai trò "công nhân trực tiếp", tự động hóa to
 **🛡️ Cơ chế bảo vệ & Tiện ích:**
 * **Watchdog (Chống Zombie):** Liên tục giám sát cờ `stop_render.flag`. Nếu phát hiện, lập tức "tự sát" và chém bay mọi tiến trình con (Python, FFmpeg) đang chạy dở.
 * **Báo cáo Telegram:** Tự động bắn thông báo về điện thoại ngay khi xưởng hoàn tất mẻ render.
+
+## II. Edit Video (Công cụ Xử lý Truyền thông)
+
+Thư mục `edit-video` chứa các module chuyên biệt (Python & Bash Script) làm nhiệm vụ tương tác trực tiếp với FFmpeg để cắt ghép, chỉnh sửa và tối ưu hóa file video.
+
+### 1. `auto_render.py` (Script Lõi Render)
+Xử lý logic chồng lớp (Overlay) và nhào nặn video thô kết hợp với các hiệu ứng (Text Effects).
+* **Hoạt động:** Tự động bắt cặp video trong thư mục `INPUT` với file hiệu ứng tương ứng trong thư mục `EFFECTS` (dựa trên tiền tố tên file).
+* **Xử lý FFmpeg (`-filter_complex`):** Làm chậm video (10/9), nhân đôi khung hình, lật ngược (hflip) để tạo hiệu ứng seamless loop (lặp vô tận), chỉnh tỷ lệ màn hình dọc (1080:1920) và loại bỏ nền xanh (colorkey) của file text effect.
+* **Clean Log:** Tối ưu triệt để luồng stdout/stderr (dùng `DEVNULL` và `-loglevel warning`), chặn đứng các log tiến độ rác (frame=...) để đẩy thẳng thông báo "sạch" lên giao diện Web UI.
+
+---
+
+### 2. `cut-video.sh` (Script Chuẩn hóa Thời lượng)
+Công cụ dọn dẹp hàng loạt, cắt bỏ những giây thừa đầu video để tránh nội dung bị lặp lại hoặc lỗi nhịp.
+* **Logic:** Dùng `ffprobe` quét thời lượng thực tế của từng video gốc.
+* **Điều kiện xử lý:** Chỉ tác động vào các file có thời lượng dài hơn **9.75 giây**.
+* **Thực thi:** Dùng `ffmpeg -ss 0.5` để cắt phăng 0.5 giây đầu tiên của video (giữ nguyên chất lượng nhờ stream copy `-c copy`), sau đó ghi đè trực tiếp lên file cũ.
+
+---
+
+### 3. `encode.sh` (Script Đóng gói Định dạng)
+Tối ưu hóa dung lượng và định dạng (Encoding) để phù hợp 100% với tiêu chuẩn nền tảng mảng video ngắn (TikTok, Shorts, Reels).
+* **Chuẩn Video:** Ép về mã hóa chuẩn H.264 (`libx264`), profile High, pixel format `yuv420p` (hỗ trợ hiển thị trên mọi thiết bị).
+* **Bitrate Control:** Giới hạn dải bitrate mục tiêu là 6Mbps (`-b:v 6M`) và tối đa không vượt quá 8Mbps để tối ưu dung lượng tải lên mạng mà không làm mờ hình ảnh. Âm thanh được giữ nguyên bản (`-c:a copy`).
+* **Clean-up:** Sau khi encode thành công một video (`_fix.mp4`), hệ thống sẽ tự động xóa file gốc lỗi để giải phóng dung lượng.
