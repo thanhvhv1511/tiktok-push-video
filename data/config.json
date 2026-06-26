@@ -1,0 +1,8 @@
+{
+    "IS_RANDOM": false,
+    "START_TIME_STR": "2026-06-20 16:20",
+    "INTERVAL_MINUTES": 30,
+    "CSV_FILE": "/Users/thanhvhv/personal/tool/site/data/database.csv",
+    "OUTPUT_FILE": "/Users/thanhvhv/personal/tool/site/data/schedule_plan.csv",
+    "VIDEO_DIR": "/Users/thanhvhv/personal/tool/site/media/videos"
+}

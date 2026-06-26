@@ -1,0 +1,160 @@
+:root {
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --bg-color: #f1f5f9;
+    --text-main: #334155;
+    --border-color: #e2e8f0;
+}
+
+body { 
+    background-color: var(--bg-color); 
+    font-family: 'Inter', sans-serif; 
+    color: var(--text-main);
+    padding-bottom: 3rem;
+}
+
+/* Card & Layout */
+.dashboard-card { 
+    background: #ffffff;
+    border: none; 
+    border-radius: 16px; 
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05); 
+    overflow: hidden;
+}
+
+/* Table Styling */
+.table > :not(caption) > * > * { 
+    padding: 1rem 1.5rem; 
+    border-bottom-color: var(--border-color); 
+    vertical-align: middle;
+}
+.table thead th { 
+    font-size: 0.8rem; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+    color: #64748b; 
+    background-color: #f8fafc; 
+    font-weight: 600; 
+    border-bottom: 2px solid var(--border-color) !important; 
+}
+.table tbody tr { transition: background-color 0.2s ease; }
+.table tbody tr:hover { background-color: #f8fafc; }
+
+/* Custom Soft Badges */
+.badge { font-weight: 600; padding: 0.5em 0.8em; border-radius: 6px; font-size: 0.75rem; }
+.bg-soft-success { background-color: #dcfce7; color: #166534; }
+.bg-soft-danger { background-color: #fee2e2; color: #991b1b; }
+.bg-soft-info { background-color: #e0f2fe; color: #075985; }
+.bg-soft-secondary { background-color: #f1f5f9; color: #64748b; }
+
+/* Form Controls */
+.form-control, .form-select { 
+    border-radius: 8px; 
+    border: 1px solid #cbd5e1; 
+    padding: 0.6rem 1rem; 
+    transition: all 0.2s; 
+    color: var(--text-main);
+}
+.form-control:focus { 
+    border-color: var(--primary-color); 
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); 
+}
+
+.input-group-text {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: #64748b;
+}
+
+/* Buttons */
+.btn-primary { 
+    background-color: var(--primary-color); 
+    border-color: var(--primary-color); 
+    border-radius: 8px; 
+    font-weight: 600; 
+    padding: 0.75rem 1.5rem; 
+    transition: all 0.2s; 
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3); 
+}
+.btn-primary:hover { 
+    background-color: var(--primary-hover); 
+    transform: translateY(-1px); 
+    box-shadow: 0 6px 8px -1px rgba(59, 130, 246, 0.4);
+}
+
+/* Checkbox Custom */
+.form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-color: #cbd5e1;
+    cursor: pointer;
+}
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Config Panel */
+.config-row { background-color: #fafaf9; border-left: 4px solid var(--primary-color); }
+.file-list { 
+    max-height: 180px; 
+    overflow-y: auto; 
+    border: 1px solid #e2e8f0; 
+    border-radius: 8px; 
+    padding: 12px; 
+    background: #ffffff; 
+}
+
+/* Memory Pinned Chips (Mới thêm) */
+.memory-chip {
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: var(--text-main);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.memory-chip:hover {
+    background-color: #f8fafc;
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+.memory-chip i {
+    color: #f59e0b; /* Màu vàng sao ghim */
+}
+
+/* ====================================================
+   TRẠM ĐĂNG (PUBLISH) STYLES
+   ==================================================== */
+.rotate-icon {
+    display: inline-block;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.cursor-pointer { 
+    cursor: pointer; 
+}
+
+.transition-all { 
+    transition: all 0.3s ease; 
+}
+
+/* Tuốt lại vùng scrollbar checkbox mượt mà (Chỉ áp dụng trong khối thẻ .dashboard-card để không ảnh hưởng trang khác) */
+.dashboard-card div::-webkit-scrollbar { 
+    width: 4px; 
+}
+.dashboard-card div::-webkit-scrollbar-track { 
+    background: #f1f5f9; 
+}
+.dashboard-card div::-webkit-scrollbar-thumb { 
+    background: #cbd5e1; 
+    border-radius: 2px; 
+}

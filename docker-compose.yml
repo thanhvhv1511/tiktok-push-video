@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  web-tt:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile
+    ports:
+      - "8015:80"
+    environment:
+      - DB_HOST=db-tt
+      - DB_NAME=thanhvhv
+      - DB_USER=root
+      - DB_PASS=151120
+      - MAC_BASE_PATH=/Users/thanhvhv/personal/tool/site
+      - VIDEO_DIR=/var/www/html/videos
+      - PROCESSED_DIR=/var/www/html/push-video/processed
+      - PUSH_VIDEO_DIR=/var/www/html/push-video/videos
+      - CONFIRM_PASSWORD=1
+      - LOG_FILE_PATH=data/process.log
+      - CONTAINER_SCHEDULE_JSON=data/schedule.json
+      - CONTAINER_CONFIG_JSON=push-video/config.json
+      - BACKEND_API_URL=http://host.docker.internal:9001/run
+    volumes:
+      - ./web:/var/www/html
+      - ./data:/var/www/html/data
+      - ./media/videos:/var/www/html/videos
+      - ./push-video:/var/www/html/push-video
+    depends_on:
+      - db-tt
+    networks:
+      - bot_network
+
+  db-tt:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 151120
+      MYSQL_DATABASE: thanhvhv
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./infra/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - bot_network
+
+volumes:
+  db_data:
+
+networks:
+  bot_network:
+    driver: bridge
