@@ -17,8 +17,13 @@ pm2 reload auto-render-worker
 
 
 # Kiến trúc 
-## I. Core
-Đây là "trái tim" xử lý ngầm của toàn bộ hệ thống, tự động hóa 100% quy trình render và giao tiếp với Web UI. Cụm Core hoạt động với cơ chế 3 lớp chặt chẽ: app.py tiếp nhận lệnh điều khiển (nhạc trưởng), worker.js xếp hàng các luồng chạy tuần tự để chống sập phần cứng (gác cổng), và run-pipeline.js trực tiếp thực thi việc nhào nặn video từ file thô ra thành phẩm cuối cùng (công nhân).
+## I. Core (Bộ máy trung tâm)
+
+Đây là "trái tim" xử lý ngầm của hệ thống, tự động hóa 100% quy trình render và giao tiếp với Web UI. Cụm Core hoạt động với cơ chế 3 lớp chặt chẽ: **Nhạc trưởng** (`app.py`), **Gác cổng** (`worker.js`), và **Công nhân** (`run-pipeline.js`).
+
+### 🔄 Sơ Đồ Luồng Hoạt Động (Workflow)
+
+```text
 [Web UI] 
    │ (Gửi yêu cầu Render / Đăng Video)
    ▼
