@@ -1,8 +1,7 @@
 const { chromium } = require('playwright');
 const { exec } = require('child_process');
 
-const config = require('./config'); // Config vẫn nằm cùng cấp với main.js
-// ⚡ Cập nhật đường dẫn trỏ vào folder utils
+const config = require('./utils/config');
 const { delay, loadTasks, updateTaskStatus, syncDatabaseStatus, checkCancelFromDB } = require('./utils/helpers');
 const TikTok = require('./utils/tiktok'); 
 
@@ -48,22 +47,22 @@ console.log(`==================================================\n`);
         console.log(`▶️ ĐANG XỬ LÝ [${i + 1}/${tasks.length}]: ${task.fileName}`);
         
         try {
-            checkCancelFromDB(task.videoId);
+            checkCancelFromDB(task.videoId, config.PORT_ARG);
             syncDatabaseStatus(task.videoId, 'PROCESSING');
             
             await page.goto('https://www.tiktok.com/tiktokstudio/upload', { waitUntil: 'domcontentloaded' });
             await page.waitForTimeout(4000);
 
-            checkCancelFromDB(task.videoId);
+            checkCancelFromDB(task.videoId, config.PORT_ARG);
             await TikTok.uploadVideo(page, task.path);
 
-            checkCancelFromDB(task.videoId);
+            checkCancelFromDB(task.videoId, config.PORT_ARG);
             await TikTok.inputCaption(page, task.caption);
 
-            checkCancelFromDB(task.videoId);
+            checkCancelFromDB(task.videoId, config.PORT_ARG);
             await TikTok.attachProduct(page, task.product);
 
-            checkCancelFromDB(task.videoId);
+            checkCancelFromDB(task.videoId, config.PORT_ARG);
             await TikTok.scheduleAndSubmit(page, task.schedule);
             
             console.log(`✅ [SUCCESS] Lên lịch thành công!`);
@@ -72,7 +71,7 @@ console.log(`==================================================\n`);
             await page.waitForTimeout(8000);
 
         } catch (error) {
-            checkCancelFromDB(task.videoId); 
+            checkCancelFromDB(task.videoId, config.PORT_ARG); 
             console.error(`❌ [ERROR] LỖI MẠNG/UI: ${error.message}`);
             updateTaskStatus(task.fileName, 'ERROR');
             syncDatabaseStatus(task.videoId, 'ERROR', error.message);

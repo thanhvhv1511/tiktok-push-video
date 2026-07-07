@@ -24,14 +24,14 @@ try {
 
     // 2. Lấy thông tin chi tiết video thuộc đợt (chỉ lấy 1 lần duy nhất)
     if ($batch_id === 'DOT_LE_TANG') {
-        $query = "SELECT pv.id, pv.product_id, pv.processed_filename, pv.publish_time, p.name as product_name, p.caption 
+        $query = "SELECT pv.id, p.item_id, pv.product_id, pv.processed_filename, pv.publish_time, p.name as product_name, p.caption 
                   FROM processed_videos pv 
                   JOIN products p ON pv.product_id = p.product_id 
                   WHERE pv.batch_id IS NULL ORDER BY pv.publish_time ASC";
         $stmt_get = $pdo->prepare($query);
         $stmt_get->execute();
     } else {
-        $query = "SELECT pv.id, pv.product_id, pv.processed_filename, pv.publish_time, p.name as product_name, p.caption 
+        $query = "SELECT pv.id, p.item_id, pv.product_id, pv.processed_filename, pv.publish_time, p.name as product_name, p.caption 
                   FROM processed_videos pv 
                   JOIN products p ON pv.product_id = p.product_id 
                   WHERE pv.batch_id = ? ORDER BY pv.publish_time ASC";
@@ -95,7 +95,7 @@ try {
         $fp = fopen($csv_filename, 'w');
         fputs($fp, "\xEF\xBB\xBF"); // BOM UTF-8
         
-        fputcsv($fp, ['Video_Path', 'Video_Name', 'Product_Name', 'Caption', 'Scheduled_Time', 'Status', 'Video_ID']);
+        fputcsv($fp, ['Video_Path', 'Video_Name', 'Product_ID', 'Caption', 'Scheduled_Time', 'Status', 'Video_ID']);
 
         foreach ($videos as $vid) {
             $absolute_video_path = rtrim($mac_base_path, '/') . '/push-video/videos/' . ltrim($vid['processed_filename'], '/');
@@ -105,7 +105,7 @@ try {
             fputcsv($fp, [
                 $absolute_video_path,
                 $video_name,
-                $vid['product_name'],
+                $vid['item_id'],
                 $vid['caption'],
                 $time_formatted,
                 'PENDING',

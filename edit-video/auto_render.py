@@ -64,27 +64,26 @@ def auto_render_run():
         # -------------------------------------------------------------------------
         cmd = [
             'ffmpeg', '-y',
-            # ⚡ BỊT MIỆNG TIẾN ĐỘ THÔ: Đẩy log level về mức cảnh báo để chặn đứng đống chữ frame=...
-            '-loglevel', 'warning', 
             '-i', input_video_path,
             '-i', text_effect_path,
             '-filter_complex', 
-            '[0:v]setpts=10/9*PTS[slowed]; '
+            '[0:v]setpts=20/19*PTS[slowed]; '
             '[slowed]split=2[v1][v2]; '
             '[v2]hflip[v2_mirrored]; '
             '[v1][v2_mirrored]concat=n=2:v=1:a=0[bg_concat]; '
-            '[bg_concat]scale=1080:1920,setsar=1[vid_scaled]; '
-            '[1:v]scale=1080:1920,colorkey=0x00FF00:0.3:0.1[chroma_out]; '
+            # 1. Dùng sws_flags=lanczos để chống mờ khi phóng to + unsharp để tăng độ nét chi tiết
+            '[bg_concat]scale=1440:2560:sws_flags=lanczos,unsharp=3:3:0.4:3:3:0.4,setsar=1[vid_scaled]; '
+            '[1:v]scale=1440:2560:sws_flags=lanczos,colorkey=0x00FF00:0.3:0.1[chroma_out]; '
             '[vid_scaled][chroma_out]overlay=x=(W-w)/2:y=(H-h)/2:shortest=1[video_out]',
             '-map', '[video_out]',
             '-map', '1:a',
             '-c:v', 'libx264',
-            '-preset', 'slow',
-            '-crf', '18',
+            '-preset', 'slow',     # Giữ nguyên slow (hoặc veryslow) để nén block ảnh thông minh
+            '-crf', '17',          # 2. Giảm từ 18 xuống 17 để tăng dung lượng bitrate, giảm nén vỡ hạt
+            '-tune', 'film',       # 3. Tối ưu hóa pixel cho video có chi tiết đời thực / sản phẩm
             '-pix_fmt', 'yuv420p',
             '-c:a', 'aac',
             '-b:a', '320k',
-            # ⚡ BỎ QUA -stats để không đẩy thông số realtime rác ra stdout/stderr nữa
             output_video_path
         ]
 

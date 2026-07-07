@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { exec, execSync } = require('child_process');
-const config = require('../config'); // ⚡ Đã cập nhật đường dẫn lùi ra ngoài 1 cấp
+const config = require('./config');
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -52,7 +52,7 @@ function syncDatabaseStatus(videoId, status, errorMsg = '') {
     exec(cmd, (err) => { if (err) console.log(`❌ [Lỗi Đồng Bộ DB] ${err.message}`); });
 }
 
-function checkCancelFromDB(videoId) {
+function checkCancelFromDB(videoId, port) {
     try {
         const phpScript = path.join(config.PHP_DIR, 'cli_check_status.php');
         const cmd = `export PATH=$PATH:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin && "${config.PHP_PATH}" "${phpScript}" ${videoId} ${config.ACCOUNT_ID_ARG}`;
@@ -61,9 +61,20 @@ function checkCancelFromDB(videoId) {
         if (result === 'CANCELLED') {
             console.log(`\n🛑 [DỪNG KHẨN CẤP] Phát hiện lệnh HỦY từ Web! Tiêu diệt Bot ngay lập tức.`);
             process.exit(1); 
+        } 
+        else if (result === 'EXIT') {
+            console.log(`\n🧹 [DỌN DẸP] Phát hiện lệnh EXIT! Đang ép đóng Chrome tại port ${port}...`);
+            try {
+                // Ép đóng Chrome theo port truyền vào, stdio: 'ignore' để ẩn log rác của terminal
+                execSync(`pkill -9 -f "remote-debugging-port=${port}"`, { stdio: 'ignore' });
+            } catch (err) {
+                // Bỏ qua nếu tiến trình Chrome không tồn tại (đã tự đóng trước đó)
+            }
+            // Tắt luôn Bot để Playwright không văng lỗi mất kết nối CDP
+            process.exit(1);
         }
     } catch (e) {
-        // Bỏ qua lỗi thực thi nhỏ
+        // Bỏ qua lỗi thực thi nhỏ của PHP script
     }
 }
 

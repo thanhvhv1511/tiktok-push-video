@@ -160,7 +160,7 @@ def run_bot_process(payload: BotPayload):
     os.makedirs(os.path.dirname(bot_log_file), exist_ok=True)
     
     # ⚡ FIX 2: Thống nhất tên biến môi trường thành BOT_SCRIPT_PATH cho chuẩn cấu hình chung
-    default_script = os.path.join(SITE_DIR, "push-video", "2-run-upload.js")
+    default_script = os.path.join(SITE_DIR, "push-video", "main.js")
     bot_script = os.getenv("BOT_SCRIPT_PATH", default_script)
     
     working_dir = os.path.dirname(bot_script) if os.path.exists(bot_script) else os.path.join(SITE_DIR, "push-video")
@@ -225,7 +225,7 @@ def trigger_bot(payload: BotPayload, background_tasks: BackgroundTasks):
 def kill_chrome():
     try:
         # FastAPI chạy ngoài Mac nên có quyền gọi thẳng pkill của Mac
-        subprocess.run(["pkill", "-9", "-f", "Google Chrome"])
+        subprocess.run(["pkill", "-9", "-f", "tiktok-browser"])
         
         with open(LOG_FILE, "a", encoding="utf-8") as f:
             f.write(f"\n🧹 [HỆ THỐNG] Đã nhận lệnh dọn dẹp và ép đóng toàn bộ Chrome ngầm!\n")

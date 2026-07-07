@@ -1,22 +1,8 @@
 {
     "IS_RANDOM": false,
-    "START_TIME_STR": "2026-06-18 10:48",
+    "START_TIME_STR": "2026-06-17 23:45",
     "INTERVAL_MINUTES": 45,
-    "DATABASE_CSV": "/Users/thanhvhv/personal/tool/site/push-video/database.csv",
-    "OUTPUT_PLAN_DIR": "/Users/thanhvhv/personal/tool/site/web/plans",
-    "PUSH_VIDEO_DIR": "/Users/thanhvhv/personal/tool/site/push-video/videos",
-    "ACCOUNTS": [
-        {
-            "name": "nangshop-thanhkx2000",
-            "port": 9222
-        },
-        {
-            "name": "xinhshop-thanha1k43",
-            "port": 9223
-        },
-        {
-            "name": "nangstore-hoangvuhust2004",
-            "port": 9224
-        }
-    ]
+    "CSV_FILE": "/Users/thanhvhv/personal/tool/site/data/database.csv",
+    "OUTPUT_FILE": "/Users/thanhvhv/personal/tool/site/data/schedule_plan.csv",
+    "VIDEO_DIR": "/Users/thanhvhv/personal/tool/site/media/videos"
 }

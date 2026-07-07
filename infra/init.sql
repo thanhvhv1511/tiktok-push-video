@@ -102,7 +102,7 @@ CREATE TABLE video_publish_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
     video_id INT,
     account_id INT,
-    status ENUM('PENDING', 'PROCESSING', 'SUCCESS', 'ERROR', 'CANCELLED') DEFAULT 'PENDING', -- ⚡ Trạng thái chi tiết của từng video trên kênh đó
+    status ENUM('PENDING', 'PROCESSING', 'SUCCESS', 'ERROR', 'CANCELLED', 'EXIT') DEFAULT 'PENDING', -- ⚡ Trạng thái chi tiết của từng video trên kênh đó
     error_message TEXT NULL, -- ⚡ Lưu nguyên nhân nếu Bot báo lỗi (kẹt mạng, sai định dạng...)
     pushed_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- ⚡ Tự động cập nhật giờ mỗi khi Bot đổi trạng thái
     FOREIGN KEY (video_id) REFERENCES processed_videos(id) ON DELETE CASCADE,

@@ -1,0 +1,22 @@
+{
+    "IS_RANDOM": false,
+    "START_TIME_STR": "2026-06-18 10:48",
+    "INTERVAL_MINUTES": 45,
+    "DATABASE_CSV": "/Users/thanhvhv/personal/tool/site/push-video/database.csv",
+    "OUTPUT_PLAN_DIR": "/Users/thanhvhv/personal/tool/site/web/plans",
+    "PUSH_VIDEO_DIR": "/Users/thanhvhv/personal/tool/site/push-video/videos",
+    "ACCOUNTS": [
+        {
+            "name": "nangshop-thanhkx2000",
+            "port": 9222
+        },
+        {
+            "name": "xinhshop-thanha1k43",
+            "port": 9223
+        },
+        {
+            "name": "nangstore-hoangvuhust2004",
+            "port": 9224
+        }
+    ]
+}

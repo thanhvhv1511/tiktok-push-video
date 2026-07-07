@@ -130,7 +130,7 @@ async function main() {
 
         const processCount = process.env.PROCESS_COUNT ? parseInt(process.env.PROCESS_COUNT, 10) : 0;
 
-        // BƯỚC 1: QUÉT VÀ GOM TỆP
+        // BƯỚC 1: QUÉT, GOM TỆP VÀ ĐƯA THẲNG VÀO THƯ MỤC INPUT
         logLive(`--- 📦 BƯỚC 1: QUÉT VÀ GOM VIDEOS THÔ CỦA SẢN PHẨM ${currentProductId} ---`);
         const matchedDirs = fs.readdirSync(BASE_SOURCE_DIR).filter(f => f.startsWith(currentProductId) && fs.statSync(path.join(BASE_SOURCE_DIR, f)).isDirectory());
         if (matchedDirs.length === 0) throw new Error(`Không tìm thấy folder thô cho sản phẩm: ${currentProductId}`);
@@ -147,31 +147,7 @@ async function main() {
             rawFiles = rawFiles.slice(0, processCount);
         }
 
-        try {
-            if (fs.existsSync(PUSH_DIR)) execSync(`rm -rf "${PUSH_DIR}"/*`, { stdio: 'ignore', env: process.env });
-        } catch (err) {}
-
-        if (!fs.existsSync(PUSH_DIR)) fs.mkdirSync(PUSH_DIR, { recursive: true });
-
-        const rawFilesToCleanup = [];
-        rawFiles.forEach((file, index) => {
-            const sourceFile = path.join(productRawFolder, file);
-            const targetFile = path.join(PUSH_DIR, file); 
-            logLive(`⏳ [${index + 1}/${rawFiles.length}] Đang nạp vào thớt: ${file}...`);
-            fs.copyFileSync(sourceFile, targetFile);
-            rawFilesToCleanup.push(sourceFile);
-        });
-        logLive(`✅ Đã gom thành công ${rawFiles.length} file thô vào xưởng.\n`);
-
-        // BƯỚC 2: CẮT VIDEO
-        logLive("--- ✂️ BƯỚC 2: ĐANG CẮT VIDEO ---");
-        try {
-            await runCommandLive('./cut-video.sh', [PUSH_DIR], { cwd: TOOL_DIR });
-            logLive("✅ Cắt video hoàn tất.\n");
-        } catch (cutError) { throw cutError; }
-
-        // BƯỚC 3: CHUẨN BỊ THƯ MỤC
-        logLive("--- 📂 BƯỚC 3: CHUẨN BỊ THƯ MỤC RENDER (INPUT/OUTPUT) ---");
+        // Chuẩn bị thư mục INPUT/OUTPUT cho Render
         const inputDir = path.join(TOOL_DIR, "INPUT");
         const outputDir = path.join(TOOL_DIR, "OUTPUT");
         
@@ -183,25 +159,23 @@ async function main() {
         if (!fs.existsSync(inputDir)) fs.mkdirSync(inputDir, { recursive: true });
         if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
-        const filesToRender = fs.readdirSync(PUSH_DIR);
-        filesToRender.forEach(file => {
-            fs.copyFileSync(path.join(PUSH_DIR, file), path.join(inputDir, file));
+        // Copy file trực tiếp từ nguồn vào thư mục INPUT
+        const rawFilesToCleanup = [];
+        rawFiles.forEach((file, index) => {
+            const sourceFile = path.join(productRawFolder, file);
+            const targetFile = path.join(inputDir, file); 
+            logLive(`⏳ [${index + 1}/${rawFiles.length}] Đang nạp thẳng vào INPUT: ${file}...`);
+            fs.copyFileSync(sourceFile, targetFile);
+            rawFilesToCleanup.push(sourceFile);
         });
-        logLive(`✅ Đã đồng bộ ${filesToRender.length} file mới vào thư mục INPUT.\n`);
+        logLive(`✅ Đã gom và đồng bộ thành công ${rawFiles.length} file vào thư mục INPUT.\n`);
 
-        // BƯỚC 4: RENDER PYTHON
-        logLive("--- 🐍 BƯỚC 4: ĐANG CHẠY RENDER PYTHON ---");
+        // BƯỚC 2: RENDER PYTHON (Trước đây là Bước 4)
+        logLive("--- 🐍 BƯỚC 2: ĐANG CHẠY RENDER PYTHON ---");
         try {
             await runCommandLive('python3', ['auto_render.py'], { cwd: TOOL_DIR });
             logLive("✅ Render Python hoàn tất.\n");
         } catch (pyError) { throw pyError; }
-
-        // BƯỚC 5: ENCODE
-        logLive("--- 🎬 BƯỚC 5: ĐANG CHẠY ENCODE OUTPUT ---");
-        try {
-            await runCommandLive('./encode.sh', [outputDir], { cwd: TOOL_DIR });
-            logLive("✅ Encode output hoàn tất.\n");
-        } catch (encError) { throw encError; }
 
         // ==========================================
         // BƯỚC 6: PHÂN PHỐI THÀNH PHẨM (UPDATE: GỘP VÀO PROCESSED_DIR THEO MÃ SP)
